@@ -236,10 +236,10 @@
         showError("Nao foi possivel acessar a camera. Verifique a permissao do navegador e use HTTPS.");
       });
 
-      window.addEventListener("error", function () {
-        if (!hasShownError) {
-          showError("A inicializacao da experiencia AR falhou. Recarregue a pagina e confira a permissao da camera.");
-        }
+      window.addEventListener("camera-init", function () {
+        hasShownError = false;
+        errorBox.textContent = "";
+        errorBox.classList.remove("is-visible");
       });
 
       scene.addEventListener("loaded", function () {
@@ -259,9 +259,7 @@
           return;
         }
 
-        video.setAttribute("playsinline", "true");
-        video.setAttribute("muted", "true");
-        video.style.backgroundColor = "transparent";
+        prepareVideo(video);
       });
 
       scene.addEventListener("renderstart", function () {
@@ -272,12 +270,35 @@
         }
 
         if (video) {
-          video.setAttribute("playsinline", "true");
-          video.setAttribute("muted", "true");
-          video.style.backgroundColor = "transparent";
-          video.style.objectFit = "cover";
+          prepareVideo(video);
         }
       });
+
+      function prepareVideo(video) {
+        video.setAttribute("playsinline", "true");
+        video.setAttribute("webkit-playsinline", "true");
+        video.setAttribute("autoplay", "true");
+        video.setAttribute("muted", "true");
+        video.style.backgroundColor = "transparent";
+        video.style.objectFit = "cover";
+
+        if (video.readyState >= 2) {
+          errorBox.textContent = "";
+          errorBox.classList.remove("is-visible");
+          hasShownError = false;
+          return;
+        }
+
+        video.addEventListener(
+          "loadeddata",
+          function () {
+            errorBox.textContent = "";
+            errorBox.classList.remove("is-visible");
+            hasShownError = false;
+          },
+          { once: true }
+        );
+      }
     })();
   </script>
 </body>
