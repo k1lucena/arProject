@@ -8,6 +8,7 @@
   <script src="https://raw.githack.com/AR-js-org/AR.js/3.4.5/aframe/build/aframe-ar.js"></script>
   <style>
     :root {
+      --app-height: 100vh;
       --panel: rgba(7, 14, 24, 0.84);
       --border: rgba(74, 209, 255, 0.42);
       --text: #eef8ff;
@@ -23,14 +24,15 @@
     html,
     body {
       width: 100%;
-      height: 100%;
-      min-height: 100vh;
-      min-height: 100dvh;
+      height: var(--app-height);
+      min-height: var(--app-height);
       margin: 0;
       overflow: hidden;
       background: #000;
       font-family: "Segoe UI", Tahoma, Geneva, Verdana, sans-serif;
       color: var(--text);
+      position: fixed;
+      inset: 0;
     }
 
     a-scene {
@@ -40,8 +42,8 @@
       bottom: 0 !important;
       left: 0 !important;
       width: 100vw !important;
-      height: 100vh !important;
-      height: 100dvh !important;
+      height: var(--app-height) !important;
+      min-height: var(--app-height) !important;
       background: transparent !important;
       z-index: 1 !important;
       display: block !important;
@@ -54,26 +56,23 @@
     .arjs-video {
       position: fixed !important;
       top: 0 !important;
-      right: 0 !important;
-      bottom: 0 !important;
       left: 0 !important;
-      width: 100vw !important;
-      height: 100vh !important;
-      height: 100dvh !important;
-      object-fit: cover !important;
       background: transparent !important;
-      transform: none !important;
     }
 
     video,
     #arjs-video,
     .arjs-video {
       z-index: 0 !important;
+      object-fit: cover !important;
     }
 
     .a-canvas,
     canvas {
       z-index: 1 !important;
+      width: 100vw !important;
+      height: var(--app-height) !important;
+      min-height: var(--app-height) !important;
     }
 
     .hud {
@@ -146,10 +145,9 @@
     <a-marker id="hiro-marker" preset="hiro" emitevents="true">
       <a-entity
         id="k1-logo"
-        position="0 0.08 0"
+        position="0 0.1 0"
         rotation="0 0 0"
-        scale="0.58 0.58 0.58"
-        animation="property: rotation; to: 0 360 0; loop: true; dur: 5000; easing: linear"
+        scale="0.76 0.76 0.76"
       >
         <!-- Letra k -->
         <a-box
@@ -352,8 +350,11 @@
         video.setAttribute("muted", "true");
         video.style.backgroundColor = "transparent";
         video.style.objectFit = "cover";
-        video.style.width = window.innerWidth + "px";
-        video.style.height = window.innerHeight + "px";
+        video.style.maxWidth = "none";
+        video.style.maxHeight = "none";
+        video.style.position = "fixed";
+        video.style.zIndex = "0";
+        applyVideoCover(video);
 
         if (video.readyState >= 2) {
           errorBox.textContent = "";
@@ -368,6 +369,15 @@
             errorBox.textContent = "";
             errorBox.classList.remove("is-visible");
             hasShownError = false;
+            applyVideoCover(video);
+          },
+          { once: true }
+        );
+
+        video.addEventListener(
+          "loadedmetadata",
+          function () {
+            applyVideoCover(video);
           },
           { once: true }
         );
@@ -378,9 +388,13 @@
         var width = viewport ? Math.round(viewport.width) : window.innerWidth;
         var height = viewport ? Math.round(viewport.height) : window.innerHeight;
         var video = document.querySelector("video");
+        var heightPx = height + "px";
+
+        document.documentElement.style.setProperty("--app-height", heightPx);
 
         scene.style.width = width + "px";
-        scene.style.height = height + "px";
+        scene.style.height = heightPx;
+        scene.style.minHeight = heightPx;
         scene.style.top = "0";
         scene.style.left = "0";
         scene.style.right = "0";
@@ -388,7 +402,8 @@
 
         if (scene.canvas) {
           scene.canvas.style.width = width + "px";
-          scene.canvas.style.height = height + "px";
+          scene.canvas.style.height = heightPx;
+          scene.canvas.style.minHeight = heightPx;
           scene.canvas.style.backgroundColor = "transparent";
           scene.canvas.style.top = "0";
           scene.canvas.style.left = "0";
@@ -397,14 +412,35 @@
         }
 
         if (video) {
-          video.style.width = width + "px";
-          video.style.height = height + "px";
-          video.style.objectFit = "cover";
-          video.style.top = "0";
-          video.style.left = "0";
-          video.style.right = "0";
-          video.style.bottom = "0";
+          applyVideoCover(video);
         }
+      }
+
+      function applyVideoCover(video) {
+        var viewport = window.visualViewport;
+        var viewportWidth = viewport ? Math.round(viewport.width) : window.innerWidth;
+        var viewportHeight = viewport ? Math.round(viewport.height) : window.innerHeight;
+        var videoWidth = video.videoWidth || 1280;
+        var videoHeight = video.videoHeight || 720;
+        var viewportRatio = viewportWidth / viewportHeight;
+        var videoRatio = videoWidth / videoHeight;
+        var renderWidth;
+        var renderHeight;
+
+        if (viewportRatio > videoRatio) {
+          renderWidth = viewportWidth;
+          renderHeight = viewportWidth / videoRatio;
+        } else {
+          renderHeight = viewportHeight;
+          renderWidth = viewportHeight * videoRatio;
+        }
+
+        video.style.width = renderWidth + "px";
+        video.style.height = renderHeight + "px";
+        video.style.minWidth = renderWidth + "px";
+        video.style.minHeight = renderHeight + "px";
+        video.style.left = Math.round((viewportWidth - renderWidth) / 2) + "px";
+        video.style.top = Math.round((viewportHeight - renderHeight) / 2) + "px";
       }
     })();
   </script>
