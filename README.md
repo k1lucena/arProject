@@ -2,6 +2,14 @@
 
 Projeto WebAR simples e funcional para exibir uma logo 3D `k1` em realidade aumentada usando o marcador Hiro. A logo foi criada inteiramente no HTML com primitivas 3D do A-Frame, sem backend, sem React e sem modelos `.glb` externos.
 
+Esta revisao usa uma configuracao mais segura para mobile:
+
+- `A-Frame 1.3.0`
+- `AR.js 3.4.5`
+- apenas uma cena AR
+- apenas um marcador
+- apenas uma inicializacao de camera
+
 ## Arquivos
 
 - `index.html`: cena WebAR completa com camera, marcador Hiro, luzes, overlay de instrucao e logo 3D `k1`.
@@ -9,7 +17,7 @@ Projeto WebAR simples e funcional para exibir uma logo 3D `k1` em realidade aume
 
 ## Como abrir o projeto
 
-Como o projeto usa camera no navegador, o ideal e servir os arquivos por HTTPS em uma hospedagem estatica.
+Como o projeto usa camera no navegador, ele deve ser servido por HTTPS em uma hospedagem estatica para funcionar direito no celular.
 
 Para uma checagem rapida no computador:
 
@@ -18,7 +26,7 @@ Para uma checagem rapida no computador:
 3. Mostre o marcador Hiro para a camera.
 
 Observacao:
-Em muitos celulares, abrir o HTML diretamente pelo gerenciador de arquivos pode nao funcionar corretamente por causa das permissoes de camera. Por isso, para teste real no celular, publique em HTTPS.
+Em muitos celulares, abrir o HTML diretamente pelo gerenciador de arquivos pode nao funcionar corretamente por causa das permissoes de camera. Para teste real no celular, publique em HTTPS.
 
 ## Como publicar
 
@@ -60,7 +68,7 @@ No celular, o navegador normalmente so libera acesso a camera em:
 - `https://`
 - `localhost` em ambiente local
 
-Como AR.js depende da camera para detectar o marcador, sem HTTPS a experiencia pode falhar ou a camera pode nem abrir.
+Como AR.js depende da camera para detectar o marcador, sem HTTPS a experiencia pode falhar, a camera pode nem abrir ou pode ser encerrada pelo navegador.
 
 ## Como imprimir o marcador Hiro
 
@@ -80,7 +88,7 @@ Dicas:
 A logo esta dentro do elemento:
 
 ```html
-<a-entity id="k1-logo" position="0 0.35 0" rotation="-90 0 0" scale="0.9 0.9 0.9">
+<a-entity id="k1-logo" position="0 0.24 0" rotation="-90 0 0" scale="0.72 0.72 0.72">
 ```
 
 Voce pode ajustar:
@@ -124,5 +132,7 @@ Se quiser alterar partes especificas da letra `k` ou do numero `1`, edite os `a-
 
 - O projeto usa `A-Frame` para renderizacao 3D declarativa.
 - O projeto usa `AR.js` com `preset="hiro"` para reconhecimento do marcador.
-- A logo foi criada com `a-box` e `a-cylinder`, sem assets 3D externos.
+- As versoes fixadas no HTML sao `A-Frame 1.3.0` e `AR.js 3.4.5`.
+- A logo foi criada com `a-box`, sem assets 3D externos.
 - A cena foi pensada para funcionar em navegador mobile sem backend.
+- O HTML mostra uma mensagem de erro se a camera nao for liberada ou se a pagina nao estiver em contexto seguro.
