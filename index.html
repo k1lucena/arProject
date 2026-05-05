@@ -1,0 +1,316 @@
+<!DOCTYPE html>
+<html lang="pt-BR">
+<head>
+  <meta charset="UTF-8" />
+  <meta name="viewport" content="width=device-width, initial-scale=1.0, maximum-scale=1.0, user-scalable=no" />
+  <title>k1 WebAR</title>
+  <script src="https://aframe.io/releases/1.5.0/aframe.min.js"></script>
+  <script src="https://cdn.jsdelivr.net/gh/AR-js-org/AR.js/aframe/build/aframe-ar.js"></script>
+  <style>
+    :root {
+      --bg: rgba(5, 10, 20, 0.72);
+      --panel: rgba(8, 15, 28, 0.86);
+      --line: rgba(107, 223, 255, 0.9);
+      --line-soft: rgba(107, 223, 255, 0.35);
+      --text: #f3fbff;
+      --muted: #b5c6d6;
+    }
+
+    * {
+      box-sizing: border-box;
+    }
+
+    html,
+    body {
+      width: 100%;
+      height: 100%;
+      margin: 0;
+      overflow: hidden;
+      background: #02050b;
+      font-family: "Segoe UI", Tahoma, Geneva, Verdana, sans-serif;
+      color: var(--text);
+    }
+
+    .hud {
+      position: fixed;
+      inset: 0;
+      pointer-events: none;
+      z-index: 10;
+    }
+
+    .instruction {
+      position: absolute;
+      left: 50%;
+      bottom: 24px;
+      transform: translateX(-50%);
+      width: min(92vw, 420px);
+      padding: 14px 18px;
+      border: 1px solid var(--line-soft);
+      border-radius: 16px;
+      background: linear-gradient(135deg, var(--panel), rgba(2, 8, 18, 0.84));
+      text-align: center;
+      font-size: 0.98rem;
+      letter-spacing: 0.02em;
+      box-shadow: 0 0 30px rgba(0, 0, 0, 0.28);
+      backdrop-filter: blur(8px);
+    }
+
+    .scanner {
+      position: absolute;
+      top: 50%;
+      left: 50%;
+      width: min(58vw, 260px);
+      aspect-ratio: 1;
+      transform: translate(-50%, -50%);
+      border: 2px solid var(--line-soft);
+      border-radius: 22px;
+      box-shadow:
+        0 0 0 1px rgba(255, 255, 255, 0.04) inset,
+        0 0 35px rgba(27, 163, 255, 0.12);
+    }
+
+    .scanner::before,
+    .scanner::after {
+      content: "";
+      position: absolute;
+      left: 12px;
+      right: 12px;
+      height: 2px;
+      background: linear-gradient(90deg, transparent, var(--line), transparent);
+      box-shadow: 0 0 12px rgba(107, 223, 255, 0.8);
+      animation: scan 2.6s ease-in-out infinite;
+    }
+
+    .scanner::after {
+      animation-delay: 1.3s;
+    }
+
+    .corner {
+      position: absolute;
+      width: 28px;
+      height: 28px;
+      border-color: var(--line);
+      border-style: solid;
+      filter: drop-shadow(0 0 8px rgba(107, 223, 255, 0.6));
+    }
+
+    .corner.tl {
+      top: -2px;
+      left: -2px;
+      border-width: 3px 0 0 3px;
+      border-top-left-radius: 18px;
+    }
+
+    .corner.tr {
+      top: -2px;
+      right: -2px;
+      border-width: 3px 3px 0 0;
+      border-top-right-radius: 18px;
+    }
+
+    .corner.bl {
+      bottom: -2px;
+      left: -2px;
+      border-width: 0 0 3px 3px;
+      border-bottom-left-radius: 18px;
+    }
+
+    .corner.br {
+      right: -2px;
+      bottom: -2px;
+      border-width: 0 3px 3px 0;
+      border-bottom-right-radius: 18px;
+    }
+
+    .badge {
+      position: absolute;
+      top: 18px;
+      left: 50%;
+      transform: translateX(-50%);
+      padding: 10px 14px;
+      border: 1px solid rgba(107, 223, 255, 0.22);
+      border-radius: 999px;
+      background: var(--bg);
+      font-size: 0.82rem;
+      letter-spacing: 0.14em;
+      text-transform: uppercase;
+      color: var(--muted);
+      backdrop-filter: blur(6px);
+    }
+
+    @keyframes scan {
+      0%,
+      100% {
+        top: 18%;
+        opacity: 0.35;
+      }
+
+      50% {
+        top: 78%;
+        opacity: 1;
+      }
+    }
+  </style>
+</head>
+<body>
+  <div class="hud">
+    <div class="badge">WebAR Marker Scanner</div>
+    <div class="scanner" aria-hidden="true">
+      <span class="corner tl"></span>
+      <span class="corner tr"></span>
+      <span class="corner bl"></span>
+      <span class="corner br"></span>
+    </div>
+    <div class="instruction">Aponte a c&acirc;mera para o marcador impresso.</div>
+  </div>
+
+  <a-scene
+    embedded
+    renderer="antialias: true; alpha: true; colorManagement: true; sortObjects: true;"
+    vr-mode-ui="enabled: false"
+    device-orientation-permission-ui="enabled: false"
+    arjs="trackingMethod: best; sourceType: webcam; debugUIEnabled: false;"
+  >
+    <a-assets></a-assets>
+
+    <a-marker preset="hiro">
+      <a-entity id="k1-logo" position="0 0.35 0" rotation="-90 0 0" scale="0.9 0.9 0.9">
+        <!-- Base discreta para reforcar a presenca da logo sobre o marcador -->
+        <a-box
+          position="0 0 -0.03"
+          depth="0.06"
+          height="0.1"
+          width="1.45"
+          color="#0b1220"
+          material="metalness: 0.75; roughness: 0.32; emissive: #04101d; emissiveIntensity: 0.18;"
+        ></a-box>
+
+        <!-- Letra K: haste principal -->
+        <a-box
+          position="-0.42 0.02 0.02"
+          depth="0.22"
+          height="0.86"
+          width="0.16"
+          color="#4a4f57"
+          material="metalness: 1; roughness: 0.22; emissive: #10151d; emissiveIntensity: 0.12;"
+        ></a-box>
+
+        <!-- Letra K: braco superior -->
+        <a-box
+          position="-0.2 0.24 0.04"
+          depth="0.18"
+          height="0.14"
+          width="0.56"
+          rotation="0 0 42"
+          color="#565c66"
+          material="metalness: 0.96; roughness: 0.2; emissive: #10151d; emissiveIntensity: 0.1;"
+        ></a-box>
+
+        <!-- Letra K: braco inferior -->
+        <a-box
+          position="-0.19 -0.2 0.04"
+          depth="0.18"
+          height="0.14"
+          width="0.58"
+          rotation="0 0 -42"
+          color="#565c66"
+          material="metalness: 0.96; roughness: 0.2; emissive: #10151d; emissiveIntensity: 0.1;"
+        ></a-box>
+
+        <!-- Numero 1: corpo principal -->
+        <a-box
+          position="0.42 0.05 0.02"
+          depth="0.22"
+          height="0.86"
+          width="0.19"
+          color="#4d525a"
+          material="metalness: 1; roughness: 0.2; emissive: #11161e; emissiveIntensity: 0.12;"
+        ></a-box>
+
+        <!-- Numero 1: topo inclinado -->
+        <a-box
+          position="0.33 0.36 0.03"
+          depth="0.18"
+          height="0.12"
+          width="0.26"
+          rotation="0 0 -32"
+          color="#676d78"
+          material="metalness: 0.92; roughness: 0.24; emissive: #11161e; emissiveIntensity: 0.1;"
+        ></a-box>
+
+        <!-- Numero 1: base -->
+        <a-box
+          position="0.42 -0.39 0.01"
+          depth="0.24"
+          height="0.12"
+          width="0.34"
+          color="#3f454d"
+          material="metalness: 0.98; roughness: 0.24; emissive: #0f141c; emissiveIntensity: 0.12;"
+        ></a-box>
+
+        <!-- Detalhes neon na letra K -->
+        <a-box
+          position="-0.34 0.31 0.15"
+          depth="0.03"
+          height="0.05"
+          width="0.22"
+          rotation="0 0 42"
+          color="#63dfff"
+          material="emissive: #3fd9ff; emissiveIntensity: 1.4; metalness: 0.2; roughness: 0.12;"
+        ></a-box>
+        <a-box
+          position="-0.34 -0.28 0.15"
+          depth="0.03"
+          height="0.05"
+          width="0.24"
+          rotation="0 0 -42"
+          color="#63dfff"
+          material="emissive: #3fd9ff; emissiveIntensity: 1.4; metalness: 0.2; roughness: 0.12;"
+        ></a-box>
+        <a-box
+          position="-0.49 0.02 0.15"
+          depth="0.03"
+          height="0.6"
+          width="0.04"
+          color="#38cfff"
+          material="emissive: #1ed0ff; emissiveIntensity: 1.2; metalness: 0.15; roughness: 0.1;"
+        ></a-box>
+
+        <!-- Detalhes neon no numero 1 -->
+        <a-box
+          position="0.5 0.03 0.15"
+          depth="0.03"
+          height="0.68"
+          width="0.04"
+          color="#42dfff"
+          material="emissive: #35d9ff; emissiveIntensity: 1.25; metalness: 0.15; roughness: 0.1;"
+        ></a-box>
+        <a-box
+          position="0.42 -0.41 0.15"
+          depth="0.03"
+          height="0.04"
+          width="0.23"
+          color="#42dfff"
+          material="emissive: #35d9ff; emissiveIntensity: 1.25; metalness: 0.15; roughness: 0.1;"
+        ></a-box>
+
+        <!-- Luz de recorte para reforcar o visual premium -->
+        <a-cylinder
+          position="0 0.02 -0.09"
+          radius="0.7"
+          height="0.01"
+          rotation="90 0 0"
+          color="#0e2032"
+          material="emissive: #0c3a55; emissiveIntensity: 0.22; opacity: 0.9;"
+        ></a-cylinder>
+
+        <a-light type="ambient" color="#b8d9ff" intensity="0.95"></a-light>
+        <a-light type="directional" color="#ffffff" intensity="1.1" position="1.4 2 1.2"></a-light>
+        <a-light type="directional" color="#53d9ff" intensity="0.55" position="-1 1.2 1.6"></a-light>
+      </a-entity>
+    </a-marker>
+
+    <a-entity camera></a-entity>
+  </a-scene>
+</body>
+</html>
