@@ -26,9 +26,41 @@
       height: 100%;
       margin: 0;
       overflow: hidden;
-      background: #02050b;
+      background: transparent;
       font-family: "Segoe UI", Tahoma, Geneva, Verdana, sans-serif;
       color: var(--text);
+    }
+
+    a-scene {
+      position: fixed !important;
+      inset: 0;
+      width: 100% !important;
+      height: 100% !important;
+      background: transparent !important;
+    }
+
+    .a-canvas,
+    canvas,
+    video,
+    #arjs-video,
+    .arjs-video {
+      position: fixed !important;
+      inset: 0;
+      width: 100% !important;
+      height: 100% !important;
+      object-fit: cover !important;
+      background: transparent !important;
+    }
+
+    video,
+    #arjs-video,
+    .arjs-video {
+      z-index: 0 !important;
+    }
+
+    .a-canvas,
+    canvas {
+      z-index: 1 !important;
     }
 
     .hud {
@@ -96,7 +128,7 @@
     device-orientation-permission-ui="enabled: false"
     loading-screen="enabled: false"
     renderer="alpha: true; antialias: false; precision: mediump; logarithmicDepthBuffer: false; colorManagement: false; sortObjects: true;"
-    arjs="sourceType: webcam; trackingMethod: best; debugUIEnabled: false; detectionMode: mono; matrixCodeType: 3x3;"
+    arjs="sourceType: webcam; trackingMethod: best; debugUIEnabled: false; detectionMode: mono; matrixCodeType: 3x3; videoTexture: true;"
   >
     <a-marker preset="hiro">
       <a-entity id="k1-logo" position="0 0.24 0" rotation="-90 0 0" scale="0.72 0.72 0.72">
@@ -212,6 +244,11 @@
 
       scene.addEventListener("loaded", function () {
         var video = document.querySelector("video");
+        var sceneCanvas = scene.canvas;
+
+        if (sceneCanvas) {
+          sceneCanvas.style.backgroundColor = "transparent";
+        }
 
         if (!video) {
           window.setTimeout(function () {
@@ -224,6 +261,22 @@
 
         video.setAttribute("playsinline", "true");
         video.setAttribute("muted", "true");
+        video.style.backgroundColor = "transparent";
+      });
+
+      scene.addEventListener("renderstart", function () {
+        var video = document.querySelector("video");
+
+        if (scene.canvas) {
+          scene.canvas.style.backgroundColor = "transparent";
+        }
+
+        if (video) {
+          video.setAttribute("playsinline", "true");
+          video.setAttribute("muted", "true");
+          video.style.backgroundColor = "transparent";
+          video.style.objectFit = "cover";
+        }
       });
     })();
   </script>
