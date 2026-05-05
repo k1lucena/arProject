@@ -24,19 +24,27 @@
     body {
       width: 100%;
       height: 100%;
+      min-height: 100vh;
+      min-height: 100dvh;
       margin: 0;
       overflow: hidden;
-      background: transparent;
+      background: #000;
       font-family: "Segoe UI", Tahoma, Geneva, Verdana, sans-serif;
       color: var(--text);
     }
 
     a-scene {
       position: fixed !important;
-      inset: 0;
-      width: 100% !important;
-      height: 100% !important;
+      top: 0 !important;
+      right: 0 !important;
+      bottom: 0 !important;
+      left: 0 !important;
+      width: 100vw !important;
+      height: 100vh !important;
+      height: 100dvh !important;
       background: transparent !important;
+      z-index: 1 !important;
+      display: block !important;
     }
 
     .a-canvas,
@@ -45,11 +53,16 @@
     #arjs-video,
     .arjs-video {
       position: fixed !important;
-      inset: 0;
-      width: 100% !important;
-      height: 100% !important;
+      top: 0 !important;
+      right: 0 !important;
+      bottom: 0 !important;
+      left: 0 !important;
+      width: 100vw !important;
+      height: 100vh !important;
+      height: 100dvh !important;
       object-fit: cover !important;
       background: transparent !important;
+      transform: none !important;
     }
 
     video,
@@ -115,8 +128,8 @@
   </style>
 </head>
 <body>
-  <div class="hud">
-    <div class="status">WebAR k1 | Hiro Marker</div>
+    <div class="hud">
+    <div class="status" id="status-label">WebAR k1 | Aguardando marcador Hiro</div>
     <div class="error" id="error-message" role="alert"></div>
     <div class="instruction">Aponte a c&acirc;mera para o marcador impresso.</div>
   </div>
@@ -128,84 +141,118 @@
     device-orientation-permission-ui="enabled: false"
     loading-screen="enabled: false"
     renderer="alpha: true; antialias: false; precision: mediump; logarithmicDepthBuffer: false; colorManagement: false; sortObjects: true;"
-    arjs="sourceType: webcam; trackingMethod: best; debugUIEnabled: false; detectionMode: mono; matrixCodeType: 3x3; videoTexture: true;"
+    arjs="sourceType: webcam; debugUIEnabled: false; detectionMode: mono;"
   >
-    <a-marker preset="hiro">
-      <a-entity id="k1-logo" position="0 0.24 0" rotation="-90 0 0" scale="0.72 0.72 0.72">
-        <!-- Estrutura leve da logo -->
+    <a-marker id="hiro-marker" preset="hiro" emitevents="true">
+      <a-entity
+        id="k1-logo"
+        position="0 0.08 0"
+        rotation="0 0 0"
+        scale="0.58 0.58 0.58"
+        animation="property: rotation; to: 0 360 0; loop: true; dur: 5000; easing: linear"
+      >
+        <!-- Letra k -->
         <a-box
-          position="-0.34 0 0.02"
-          width="0.14"
-          height="0.72"
-          depth="0.14"
-          color="#4c525b"
-          material="metalness: 0.92; roughness: 0.28; emissive: #0d131c; emissiveIntensity: 0.1;"
+          position="-0.31 0.12 0"
+          width="0.15"
+          height="0.62"
+          depth="0.16"
+          color="#616a77"
+          material="shader: standard; metalness: 0.95; roughness: 0.18; emissive: #111926; emissiveIntensity: 0.18;"
         ></a-box>
         <a-box
-          position="-0.14 0.2 0.02"
+          position="-0.1 0.24 0"
           width="0.42"
           height="0.11"
-          depth="0.12"
-          rotation="0 0 40"
-          color="#5a616b"
-          material="metalness: 0.94; roughness: 0.24; emissive: #0d131c; emissiveIntensity: 0.1;"
+          depth="0.14"
+          rotation="0 0 42"
+          color="#7a8493"
+          material="shader: standard; metalness: 0.92; roughness: 0.2; emissive: #111926; emissiveIntensity: 0.16;"
         ></a-box>
         <a-box
-          position="-0.14 -0.18 0.02"
+          position="-0.09 -0.03 0"
           width="0.44"
           height="0.11"
-          depth="0.12"
-          rotation="0 0 -40"
-          color="#5a616b"
-          material="metalness: 0.94; roughness: 0.24; emissive: #0d131c; emissiveIntensity: 0.1;"
+          depth="0.14"
+          rotation="0 0 -42"
+          color="#6a7380"
+          material="shader: standard; metalness: 0.92; roughness: 0.2; emissive: #111926; emissiveIntensity: 0.16;"
         ></a-box>
 
+        <!-- Numero 1 -->
         <a-box
-          position="0.34 0 0.02"
+          position="0.31 0.12 0"
           width="0.16"
-          height="0.74"
-          depth="0.14"
-          color="#4f5660"
-          material="metalness: 0.95; roughness: 0.22; emissive: #0d131c; emissiveIntensity: 0.1;"
+          height="0.64"
+          depth="0.16"
+          color="#707988"
+          material="shader: standard; metalness: 0.95; roughness: 0.18; emissive: #111926; emissiveIntensity: 0.18;"
         ></a-box>
         <a-box
-          position="0.26 0.28 0.02"
+          position="0.24 0.32 0"
           width="0.2"
           height="0.1"
-          depth="0.12"
+          depth="0.14"
           rotation="0 0 -30"
-          color="#6a727d"
-          material="metalness: 0.9; roughness: 0.25; emissive: #0d131c; emissiveIntensity: 0.08;"
+          color="#8a95a6"
+          material="shader: standard; metalness: 0.9; roughness: 0.22; emissive: #111926; emissiveIntensity: 0.14;"
         ></a-box>
         <a-box
-          position="0.34 -0.35 0.02"
+          position="0.31 -0.18 0"
           width="0.3"
           height="0.1"
-          depth="0.14"
-          color="#414852"
-          material="metalness: 0.95; roughness: 0.25; emissive: #0d131c; emissiveIntensity: 0.08;"
+          depth="0.16"
+          color="#5e6673"
+          material="shader: standard; metalness: 0.95; roughness: 0.2; emissive: #111926; emissiveIntensity: 0.14;"
         ></a-box>
 
-        <!-- Linhas neon -->
+        <!-- Neon visivel mesmo com pouca luz -->
         <a-box
-          position="-0.4 0 0.11"
-          width="0.025"
-          height="0.56"
-          depth="0.02"
-          color="#4fdcff"
-          material="emissive: #37d8ff; emissiveIntensity: 1.15; metalness: 0.08; roughness: 0.1;"
+          position="-0.39 0.12 0.1"
+          width="0.03"
+          height="0.5"
+          depth="0.03"
+          color="#57e2ff"
+          material="shader: flat; color: #57e2ff; emissive: #57e2ff; emissiveIntensity: 1.5;"
         ></a-box>
         <a-box
-          position="0.41 0 0.11"
-          width="0.025"
-          height="0.58"
-          depth="0.02"
-          color="#4fdcff"
-          material="emissive: #37d8ff; emissiveIntensity: 1.15; metalness: 0.08; roughness: 0.1;"
+          position="-0.18 0.27 0.1"
+          width="0.18"
+          height="0.03"
+          depth="0.03"
+          rotation="0 0 42"
+          color="#57e2ff"
+          material="shader: flat; color: #57e2ff; emissive: #57e2ff; emissiveIntensity: 1.5;"
+        ></a-box>
+        <a-box
+          position="-0.17 -0.06 0.1"
+          width="0.19"
+          height="0.03"
+          depth="0.03"
+          rotation="0 0 -42"
+          color="#57e2ff"
+          material="shader: flat; color: #57e2ff; emissive: #57e2ff; emissiveIntensity: 1.5;"
+        ></a-box>
+        <a-box
+          position="0.4 0.12 0.1"
+          width="0.03"
+          height="0.52"
+          depth="0.03"
+          color="#57e2ff"
+          material="shader: flat; color: #57e2ff; emissive: #57e2ff; emissiveIntensity: 1.5;"
+        ></a-box>
+        <a-box
+          position="0.31 -0.19 0.1"
+          width="0.23"
+          height="0.03"
+          depth="0.03"
+          color="#57e2ff"
+          material="shader: flat; color: #57e2ff; emissive: #57e2ff; emissiveIntensity: 1.5;"
         ></a-box>
 
-        <a-light type="ambient" color="#d7e8ff" intensity="0.75"></a-light>
-        <a-light type="directional" color="#ffffff" intensity="0.85" position="1 2 1"></a-light>
+        <a-light type="ambient" color="#f3f8ff" intensity="1.15"></a-light>
+        <a-light type="directional" color="#ffffff" intensity="1.05" position="1.2 2 1.5"></a-light>
+        <a-light type="point" color="#58deff" intensity="0.7" position="0 0.3 0.45"></a-light>
       </a-entity>
     </a-marker>
 
@@ -216,6 +263,8 @@
     (function () {
       var errorBox = document.getElementById("error-message");
       var scene = document.getElementById("ar-scene");
+      var marker = document.getElementById("hiro-marker");
+      var statusLabel = document.getElementById("status-label");
       var hasShownError = false;
 
       function showError(message) {
@@ -242,7 +291,16 @@
         errorBox.classList.remove("is-visible");
       });
 
+      marker.addEventListener("markerFound", function () {
+        statusLabel.textContent = "WebAR k1 | Marcador Hiro detectado";
+      });
+
+      marker.addEventListener("markerLost", function () {
+        statusLabel.textContent = "WebAR k1 | Aguardando marcador Hiro";
+      });
+
       scene.addEventListener("loaded", function () {
+        syncViewport();
         var video = document.querySelector("video");
         var sceneCanvas = scene.canvas;
 
@@ -263,16 +321,29 @@
       });
 
       scene.addEventListener("renderstart", function () {
+        syncViewport();
         var video = document.querySelector("video");
 
         if (scene.canvas) {
           scene.canvas.style.backgroundColor = "transparent";
         }
 
+        if (scene.renderer) {
+          scene.renderer.setClearColor(0x000000, 0);
+        }
+
         if (video) {
           prepareVideo(video);
         }
       });
+
+      window.addEventListener("resize", syncViewport);
+      window.addEventListener("orientationchange", syncViewport);
+
+      if (window.visualViewport) {
+        window.visualViewport.addEventListener("resize", syncViewport);
+        window.visualViewport.addEventListener("scroll", syncViewport);
+      }
 
       function prepareVideo(video) {
         video.setAttribute("playsinline", "true");
@@ -281,6 +352,8 @@
         video.setAttribute("muted", "true");
         video.style.backgroundColor = "transparent";
         video.style.objectFit = "cover";
+        video.style.width = window.innerWidth + "px";
+        video.style.height = window.innerHeight + "px";
 
         if (video.readyState >= 2) {
           errorBox.textContent = "";
@@ -298,6 +371,40 @@
           },
           { once: true }
         );
+      }
+
+      function syncViewport() {
+        var viewport = window.visualViewport;
+        var width = viewport ? Math.round(viewport.width) : window.innerWidth;
+        var height = viewport ? Math.round(viewport.height) : window.innerHeight;
+        var video = document.querySelector("video");
+
+        scene.style.width = width + "px";
+        scene.style.height = height + "px";
+        scene.style.top = "0";
+        scene.style.left = "0";
+        scene.style.right = "0";
+        scene.style.bottom = "0";
+
+        if (scene.canvas) {
+          scene.canvas.style.width = width + "px";
+          scene.canvas.style.height = height + "px";
+          scene.canvas.style.backgroundColor = "transparent";
+          scene.canvas.style.top = "0";
+          scene.canvas.style.left = "0";
+          scene.canvas.style.right = "0";
+          scene.canvas.style.bottom = "0";
+        }
+
+        if (video) {
+          video.style.width = width + "px";
+          video.style.height = height + "px";
+          video.style.objectFit = "cover";
+          video.style.top = "0";
+          video.style.left = "0";
+          video.style.right = "0";
+          video.style.bottom = "0";
+        }
       }
     })();
   </script>
